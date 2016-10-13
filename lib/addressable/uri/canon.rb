@@ -11,11 +11,11 @@ module Addressable
     def canonical!
       fixup!
 
-      response = fetch
+      response = fetch use_get: :on_text
       response.uri ||= dup
       response.uri.normalize!
 
-      return replace_self(response.uri) if !response.is_a?(Net::HTTPOK) && response.content_type != 'text/html'
+      return replace_self(response.uri) if !response.is_a?(Net::HTTPOK) || response.content_type != 'text/html'
 
       document = Nokogiri.HTML(response.body)
       # <link rel="canonical"> takes priority over <meta property="og:url">
